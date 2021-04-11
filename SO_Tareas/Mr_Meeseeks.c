@@ -20,14 +20,6 @@ typedef enum
    true
 } bool;
 
-// typedef struct
-// {
-//    int numeroTarea;
-//    char detalles[MAXIMA_LONGITUD_CADENA];
-//    double ejecucion;
-//    bool terminada;
-// }Tarea;
-
 struct Tarea
 {
    int numeroTarea;
@@ -67,15 +59,17 @@ void boxMM(int N, int i)
 
 int main()
 {
-   time_t initial_time = time(NULL);
-   float time_limit = 500.0f;
+   time_t endwait;
+   time_t start = time(NULL);
+   time_t seconds = 300;               // 5 minutos
+
    srand(time(0));
 
    char MMTAsk[MAXIMA_LONGITUD_CADENA];
-   int dType = 0;
-   double difficulty = 0;
+   int dType;
+   double difficulty;
    int decision;
-   int actualTAsk = 0;
+   int actualTAsk;
 
    // tareas[0].numeroTarea = 1;
    // strcpy(tareas[0].detalles, "Quiero un café francés");
@@ -123,10 +117,11 @@ int main()
          printf("-----The difficulty is: %lf-----\n", difficulty);
       }
 
-      // do
-      // {
-      //    //boxMM(difficulty, 5);
-      // } while ((time(NULL) - initial_time) < time_limit);
+      do
+      {
+         endwait = start + seconds;
+         //boxMM(difficulty, 5);
+      } while (start < endwait);
 
       do
       {
