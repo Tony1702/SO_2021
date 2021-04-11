@@ -23,7 +23,7 @@ typedef enum
 // typedef struct
 // {
 //    int numeroTarea;
-//    char detalles[100];
+//    char detalles[MAXIMA_LONGITUD_CADENA];
 //    double ejecucion;
 //    bool terminada;
 // }Tarea;
@@ -50,7 +50,7 @@ void boxMM(int N, int i)
    }
    else if (variable == 0)
    { // proceso hijo
-      printf("Proceso Hijo: pid:%d, pidd:%d\n", getpid(), getppid());
+      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, i);
       sleep(1);
    }
    else
@@ -72,8 +72,8 @@ int main()
    srand(time(0));
 
    char MMTAsk[MAXIMA_LONGITUD_CADENA];
-   int dType;
-   float difficulty;
+   int dType = 0;
+   double difficulty = 0;
    int decision;
    int actualTAsk = 0;
 
@@ -100,39 +100,39 @@ int main()
 
    do
    {
-      printf("----------Enter a task for Mr. Meeseeks----------");
-      scanf("%s", &MMTAsk);
+      printf("-----Enter a task for Mr. Meeseeks-----\n");
+      scanf("%s", &MMTAsk[MAXIMA_LONGITUD_CADENA]);
 
       do
       {
-         printf("----------Enter type of difficulty of the task 1.Selected/2.Random----------");
+         printf("-----Enter type of difficulty of the task 1.Selected/2.Random-----\n");
          scanf("%d", &dType);
-      } while (dType != 1 || dType != 2);
+      } while (dType != 1 && dType != 2);
 
       if (dType == 1)
       {
          do
          {
-            printf("----------Select a value for the difficulty, 0 = Imposible until 100 = Easy----------");
+            printf("-----Select a value for the difficulty, 0 = Imposible until 100 = Easy-----\n");
             scanf("%lf", &difficulty);
-         } while (difficulty >= 0 || difficulty <= 100);
+         } while (difficulty <= 0.0 || difficulty >= 100.0);
       }
       else
       {
          difficulty = ((float)rand() / (float)(RAND_MAX)) * 100;
-         printf("----------The difficulty is: %lf----------", difficulty);
+         printf("-----The difficulty is: %lf-----\n", difficulty);
       }
 
-      do
-      {
-         boxMM(difficulty, 5);
-      } while ((time(NULL) - initial_time) < time_limit);
+      // do
+      // {
+      //    //boxMM(difficulty, 5);
+      // } while ((time(NULL) - initial_time) < time_limit);
 
       do
       {
-         printf("----------Wanna continue? 1.Yes/0.No----------");
+         printf("-----Wanna continue? 1.Yes/0.No-----\n");
          scanf("%d", &decision);
-      } while (decision == 1 || decision == 0);
+      } while (decision != 1 && decision != 0);
    } while (decision);
 
    // printf("Cantidad de Tares Solicitadas: %d\n", contar);
