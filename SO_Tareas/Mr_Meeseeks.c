@@ -30,7 +30,7 @@ struct Tarea
 
 struct Tarea tareas[CANT_TAREAS];
 
-void boxMM(int N, int i)
+void boxMM(int N, int i, double difficulty)
 {
    pid_t variable;
 
@@ -57,19 +57,92 @@ void boxMM(int N, int i)
    }
 }
 
+bool programa(char *tarea)
+{
+   printf("-----The program is running-----\n");
+   int init_size = strlen(tarea);
+   char delim[] = " ";
+
+   char *token = strtok(tarea, delim);
+
+   if (init_size == 5)
+   {
+      int num1, num2, cont = 0;
+      char operacion;
+
+      while (token != NULL)
+      {
+         if (cont == 0)
+            num1 = atoi(token);
+         else if (cont == 1)
+            operacion = *token;
+         else if (cont == 2)
+            num2 = atoi(token);
+         cont++;
+         token = strtok(NULL, delim);
+      }
+
+      int division_por_cero = 0;
+      int operacion_valida = 1;
+      double resultado;
+      switch (operacion)
+      {
+      case '+':
+         resultado = num1 + num2;
+         break;
+      case '-':
+         resultado = num1 - num2;
+         break;
+      case '*':
+         resultado = num1 * num2;
+         break;
+      case '/':
+         if (num2 == 0)
+            division_por_cero = 1;
+         else
+         {
+            resultado = num1 / num2;
+         }
+         break;
+      default:
+         operacion_valida = 0;
+         printf("La operación no es válida\n");
+      }
+      if (operacion_valida)
+         if (division_por_cero)
+         {
+            printf("No se puede dividir entre cero\n");
+            return false;
+         }
+         else
+         {
+            printf("El resultado es: %.2f\n", resultado);
+            return true;
+         }
+   }
+   else
+   {
+      while (token != NULL)
+      {
+         printf("'%s'\n", token);
+         token = strtok(NULL, delim);
+      }
+      return true;
+   }
+}
+
 int main()
 {
    time_t endwait;
    time_t start = time(NULL);
-   time_t seconds = 300;               // 5 minutos
+   time_t seconds = 300; // 5 minutos
 
    srand(time(0));
 
    char MMTAsk[MAXIMA_LONGITUD_CADENA];
-   int dType;
+   int dType, decision, actualTAsk;
    double difficulty;
-   int decision;
-   int actualTAsk;
+   bool estado = false;
 
    // tareas[0].numeroTarea = 1;
    // strcpy(tareas[0].detalles, "Quiero un café francés");
@@ -95,7 +168,7 @@ int main()
    do
    {
       printf("-----Enter a task for Mr. Meeseeks-----\n");
-      scanf("%s", &MMTAsk[MAXIMA_LONGITUD_CADENA]);
+      scanf("%[^\n]s", MMTAsk);
 
       do
       {
@@ -109,19 +182,19 @@ int main()
          {
             printf("-----Select a value for the difficulty, 0 = Imposible until 100 = Easy-----\n");
             scanf("%lf", &difficulty);
-         } while (difficulty <= 0.0 || difficulty >= 100.0);
+         } while (difficulty < 0 || difficulty > 100);
       }
       else
       {
          difficulty = ((float)rand() / (float)(RAND_MAX)) * 100;
          printf("-----The difficulty is: %lf-----\n", difficulty);
       }
-
       do
       {
          endwait = start + seconds;
-         //boxMM(difficulty, 5);
-      } while (start < endwait);
+         estado = programa(MMTAsk);
+         //boxMM(5, 5, difficulty);
+      } while (start < endwait && estado == false);
 
       do
       {
