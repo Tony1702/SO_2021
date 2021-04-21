@@ -11,7 +11,7 @@
 #include <time.h>
 #include <string.h>
 
-#define MAXIMA_LONGITUD_CADENA 100
+#define MAXIMA 100
 #define CANT_TAREAS 50
 
 typedef enum
@@ -23,7 +23,7 @@ typedef enum
 struct Tarea
 {
    int numeroTarea;
-   char detalles[MAXIMA_LONGITUD_CADENA];
+   char detalles[MAXIMA];
    double ejecucion;
    bool terminada;
 };
@@ -104,97 +104,84 @@ bool programa(char *tarea)
    }
 }
 
-void boxMM(int N, int * i, double difficulty, char* tarea)
+bool boxMM(int N, int *i, double difficulty, char *tarea)
 {
    pid_t variable;
-   
+
    variable = fork();
-   // printf("%f \n", difficulty);
+
    if (variable < 0)
    {
       fprintf(stderr, "Mr Meeseeks has fucking die!");
    }
    else if (variable == 0)
    { // proceso hijo
-      printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+1, *i);
+      printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 1, *i);
       sleep(1);
       pid_t extra;
-      if (1<difficulty && difficulty<=85){
+      if (1 < difficulty && difficulty <= 85)
+      {
          int cantidadMeeseeks = 0;
-         if (difficulty>45)
+         if (difficulty > 45)
             cantidadMeeseeks = 3;
          else
             cantidadMeeseeks = 20;
-         for (int j=1; j<cantidadMeeseeks; j++){
+         for (int j = 1; j < cantidadMeeseeks; j++)
+         {
             *i++;
             extra = fork();
-            if (extra == 0){
-               printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+2, *i);
+            if (extra == 0)
+            {
+               printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 2, *i);
                bool resultado = programa(tarea);
                exit(0);
             }
          }
-         for (int j=1; j<cantidadMeeseeks; j++){
+         for (int j = 1; j < cantidadMeeseeks; j++)
+         {
             wait(NULL);
          }
-   }
       }
-      
+   }
    else
    { // proceso padre
       printf("---------------------------------------\n");
       *i++;
       printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
-      // if (hijos > 0)
-      // {
-      //    boxMM(hijos - 1);
-      // }
       waitpid(variable, NULL, 0);
-      printf("%s\n",tarea);
    }
+   return true;
 }
-
-
 
 int main()
 {
    time_t endwait;
    time_t start = time(NULL);
-   time_t seconds = 300; // 5 minutos
+   time_t seconds = 300;            // 5 minutos
 
    srand(time(0));
 
-   char MMTAsk[MAXIMA_LONGITUD_CADENA];
-   int dType, decision, actualTAsk;
-   double difficulty;
-   bool estado = false;
-   int N = 1;
-   int i = 0;
-   // tareas[0].numeroTarea = 1;
-   // strcpy(tareas[0].detalles, "Quiero un café francés");
-   // tareas[0].ejecucion = 86.5;
-   // tareas[0].terminada = true;
+   char MMTAsk[MAXIMA];             // "String" donde se guarda la tarea
+   int dType, decision, actualTAsk; // El tipo de dificultad y si continuar con otra tarea
+   double difficulty;               // Valor de la dificultad
+   bool estado = false;             // Booleano que indicara si se completo un Task
+   int N = 1;                       // Niveles
+   int i = 0;                       // Instancias de Meeseeks
+   int contadorT = 0;               // Contador de las Tasks
 
-   // tareas[1].numeroTarea = 2;
-   // strcpy(tareas[1].detalles, "Realizar un cálculo");
-   // tareas[1].ejecucion = 46.5;
-   // tareas[1].terminada = false;
-
-   // int i;
-   // for (i = 0; i < CANT_TAREAS; i++)
-   // {
-   //    struct Tarea tareaActual = tareas[i];
-   //    if (tareaActual.numeroTarea != 0)
-   //    {
-   //       printf("Numero tarea: %d. Detalle: %s. Ejecucion: %lf\n", tareaActual.numeroTarea, tareaActual.detalles, tareaActual.ejecucion);
-   //       fputs(tareaActual.terminada ? "true\n" : "false\n", stdout);
-   //    }
-   // }
+   char *p;                         // Quitar saltos de linea en el Task
+   int c;                           // Quitar saltos de linea en el Task
 
    do
    {
-      printf("-----Enter a task for Mr. Meeseeks-----\n");
-      scanf("%[^\n]s", MMTAsk);
+      tareas[contadorT].numeroTarea = contadorT + 1;
+      printf("-----Enter a task for Mr. Meeseeks-----\n"); 
+      //scanf("%[^\n]s", MMTAsk);
+
+      fgets(MMTAsk, MAXIMA, stdin);
+      if ((p = strchr(MMTAsk, '\n')) != NULL)
+         *p = '\0';
+      strcpy(tareas[contadorT].detalles, MMTAsk);
 
       do
       {
@@ -219,7 +206,9 @@ int main()
       {
          endwait = start + seconds;
          estado = programa(MMTAsk);
-         boxMM(N, &i, difficulty, MMTAsk);
+         //estado = boxMM(N, &i, difficulty, MMTAsk);
+         tareas[contadorT].ejecucion = start;
+         tareas[contadorT].terminada = estado;
       } while (start < endwait && estado == false);
 
       do
@@ -227,8 +216,29 @@ int main()
          printf("-----Wanna continue? 1.Yes/0.No-----\n");
          scanf("%d", &decision);
       } while (decision != 1 && decision != 0);
+
+      contadorT++;
+      while ((c = getchar()) != '\n' && c != EOF);
    } while (decision);
 
+   printf("-----Datos de la Tarea-----\n");
+   for (int i = 0; i < contadorT; i++)
+   {
+      struct Tarea tareaActual = tareas[i];
+      printf("Numero de la Tarea: %d\n", tareaActual.numeroTarea);
+      printf("Detalle de la Tarea: %s\n", tareaActual.detalles);
+      printf("Tiempo de Ejecucion de la Tarea: %lf\n", tareaActual.ejecucion);
+      if (tareaActual.terminada)
+      {
+         printf("Estado de la Tarea: Completa\n");
+      }
+      else
+      {
+         printf("Estado de la Tarea: Incompleta\n");
+      }
+      printf("----------\n");
+      // fputs(tareaActual.terminada ? "true\n" : "false\n", stdout);
+   }
    // printf("Cantidad de Tares Solicitadas: %d\n", contar);
    // printf("Tiempo de Duracion: %d\n", contar); // hay que hacer por tarea
    // printf("Tareas Terminadas: %d\n", contar);
