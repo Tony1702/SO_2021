@@ -30,61 +30,13 @@ struct Tarea
 
 struct Tarea tareas[CANT_TAREAS];
 
-void boxMM(int N, int * i, double difficulty)
-{
-   pid_t variable;
-   
-   variable = fork();
-   // printf("%f \n", difficulty);
-   if (variable < 0)
-   {
-      fprintf(stderr, "Mr Meeseeks has fucking die!");
-   }
-   else if (variable == 0)
-   { // proceso hijo
-      printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+1, *i);
-      sleep(1);
-      pid_t extra;
-      if (1<difficulty && difficulty<=85){
-         int cantidadMeeseeks = 0;
-         if (difficulty>45)
-            cantidadMeeseeks = 3;
-         else
-            cantidadMeeseeks = 20;
-         for (int j=1; j<cantidadMeeseeks; j++){
-            *i++;
-            extra = fork();
-            if (extra == 0){
-               printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+2, *i);
-               exit(0);
-            }
-         }
-         for (int j=1; j<cantidadMeeseeks; j++){
-            wait(NULL);
-         }
-   }
-      }
-      
-   else
-   { // proceso padre
-      printf("---------------------------------------\n");
-      *i++;
-      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
-      // if (hijos > 0)
-      // {
-      //    boxMM(hijos - 1);
-      // }
-      waitpid(variable, NULL, 0);
-   }
-}
-
 bool programa(char *tarea)
 {
    printf("-----The program is running-----\n");
    int init_size = strlen(tarea);
    char delim[] = " ";
-
-   char *token = strtok(tarea, delim);
+   char *copia = strcpy(copia, tarea);
+   char *token = strtok(copia, delim);
 
    if (init_size == 5)
    {
@@ -152,6 +104,58 @@ bool programa(char *tarea)
    }
 }
 
+void boxMM(int N, int * i, double difficulty, char* tarea)
+{
+   pid_t variable;
+   
+   variable = fork();
+   // printf("%f \n", difficulty);
+   if (variable < 0)
+   {
+      fprintf(stderr, "Mr Meeseeks has fucking die!");
+   }
+   else if (variable == 0)
+   { // proceso hijo
+      printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+1, *i);
+      sleep(1);
+      pid_t extra;
+      if (1<difficulty && difficulty<=85){
+         int cantidadMeeseeks = 0;
+         if (difficulty>45)
+            cantidadMeeseeks = 3;
+         else
+            cantidadMeeseeks = 20;
+         for (int j=1; j<cantidadMeeseeks; j++){
+            *i++;
+            extra = fork();
+            if (extra == 0){
+               printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+2, *i);
+               bool resultado = programa(tarea);
+               exit(0);
+            }
+         }
+         for (int j=1; j<cantidadMeeseeks; j++){
+            wait(NULL);
+         }
+   }
+      }
+      
+   else
+   { // proceso padre
+      printf("---------------------------------------\n");
+      *i++;
+      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
+      // if (hijos > 0)
+      // {
+      //    boxMM(hijos - 1);
+      // }
+      waitpid(variable, NULL, 0);
+      printf("%s\n",tarea);
+   }
+}
+
+
+
 int main()
 {
    time_t endwait;
@@ -215,7 +219,7 @@ int main()
       {
          endwait = start + seconds;
          estado = programa(MMTAsk);
-         boxMM(N, &i, difficulty);
+         boxMM(N, &i, difficulty, MMTAsk);
       } while (start < endwait && estado == false);
 
       do
