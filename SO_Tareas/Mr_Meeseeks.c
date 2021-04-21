@@ -30,25 +30,46 @@ struct Tarea
 
 struct Tarea tareas[CANT_TAREAS];
 
-void boxMM(int N, int i, double difficulty)
+void boxMM(int N, int * i, double difficulty)
 {
    pid_t variable;
-
+   
    variable = fork();
-
+   // printf("%f \n", difficulty);
    if (variable < 0)
    {
       fprintf(stderr, "Mr Meeseeks has fucking die!");
    }
    else if (variable == 0)
    { // proceso hijo
-      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, i);
+      printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+1, *i);
       sleep(1);
+      pid_t extra;
+      if (1<difficulty && difficulty<=85){
+         int cantidadMeeseeks = 0;
+         if (difficulty>45)
+            cantidadMeeseeks = 3;
+         else
+            cantidadMeeseeks = 20;
+         for (int j=1; j<cantidadMeeseeks; j++){
+            *i++;
+            extra = fork();
+            if (extra == 0){
+               printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N+2, *i);
+               exit(0);
+            }
+         }
+         for (int j=1; j<cantidadMeeseeks; j++){
+            wait(NULL);
+         }
    }
+      }
+      
    else
    { // proceso padre
       printf("---------------------------------------\n");
-      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, i);
+      *i++;
+      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
       // if (hijos > 0)
       // {
       //    boxMM(hijos - 1);
@@ -143,7 +164,8 @@ int main()
    int dType, decision, actualTAsk;
    double difficulty;
    bool estado = false;
-
+   int N = 1;
+   int i = 0;
    // tareas[0].numeroTarea = 1;
    // strcpy(tareas[0].detalles, "Quiero un café francés");
    // tareas[0].ejecucion = 86.5;
@@ -193,7 +215,7 @@ int main()
       {
          endwait = start + seconds;
          estado = programa(MMTAsk);
-         //boxMM(5, 5, difficulty);
+         boxMM(N, &i, difficulty);
       } while (start < endwait && estado == false);
 
       do
