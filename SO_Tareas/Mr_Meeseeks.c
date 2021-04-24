@@ -35,8 +35,7 @@ bool programa(char *tarea)
    printf("-----The program is running-----\n");
    int init_size = strlen(tarea);
    char delim[] = " ";
-   char *copia = strcpy(copia, tarea);
-   char *token = strtok(copia, delim);
+   char *token = strtok(tarea, delim);
    // clock_t start, end;
    // double taskTime;
    // start = clock();
@@ -104,7 +103,7 @@ bool programa(char *tarea)
       }
       return true;
    }
-   printf("'%s'\n", "se cayo aqui");
+   printf("Se cayo aqui\n");
    // end = clock();
    // taskTime = ((double) (end - start)) / CLOCKS_PER_SEC;
    // if (taskTime > 300){
@@ -165,9 +164,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
 
 int main()
 {
-   time_t endwait;
-   time_t start = time(NULL);
-   time_t seconds = 300;            // 5 minutos
+   clock_t timer;
 
    srand(time(0));
 
@@ -187,7 +184,6 @@ int main()
    {
       tareas[contadorT].numeroTarea = contadorT + 1;
       printf("-----Enter a task for Mr. Meeseeks-----\n"); 
-      //scanf("%[^\n]s", MMTAsk);
 
       fgets(MMTAsk, MAXIMA, stdin);
       if ((p = strchr(MMTAsk, '\n')) != NULL)
@@ -213,14 +209,17 @@ int main()
          difficulty = ((float)rand() / (float)(RAND_MAX)) * 100;
          printf("-----The difficulty is: %lf-----\n", difficulty);
       }
+
       do
       {
-         endwait = start + seconds;
-         // estado = programa(MMTAsk);
+         timer = clock();
+         //estado = programa(MMTAsk);
          estado = boxMM(N, i, difficulty, MMTAsk);
-         tareas[contadorT].ejecucion = start;
+         timer = clock() - timer;
+         double time_taken = ((double)timer) / CLOCKS_PER_SEC;
+         tareas[contadorT].ejecucion = time_taken;
          tareas[contadorT].terminada = estado;
-      } while (start < endwait && estado == false);
+      } while (estado == false);
 
       do
       {
@@ -258,6 +257,6 @@ int main()
    printf("---------------------------\n");
    printf("Tareas Sin Terminar: %d\n", contadorT - completadas);
    printf("---------------------------\n");
-   
+
    return 0;
 }
