@@ -37,7 +37,9 @@ bool programa(char *tarea)
    char delim[] = " ";
    char *copia = strcpy(copia, tarea);
    char *token = strtok(copia, delim);
-
+   // clock_t start, end;
+   // double taskTime;
+   // start = clock();
    if (init_size == 5)
    {
       int num1, num2, cont = 0;
@@ -102,6 +104,12 @@ bool programa(char *tarea)
       }
       return true;
    }
+   printf("'%s'\n", "se cayo aqui");
+   // end = clock();
+   // taskTime = ((double) (end - start)) / CLOCKS_PER_SEC;
+   // if (taskTime > 300){
+   //    printf("'%s'\n", "La tarea tardo mas de 5 minutos");
+   // }
 }
 
 bool boxMM(int N, int *i, double difficulty, char *tarea)
@@ -119,6 +127,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
       printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 1, *i);
       sleep(1);
       pid_t extra;
+      // bool resultado = programa(tarea);
       if (1 < difficulty && difficulty <= 85)
       {
          int cantidadMeeseeks = 0;
@@ -133,7 +142,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
             if (extra == 0)
             {
                printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 2, *i);
-               bool resultado = programa(tarea);
+               // bool resultado = programa(tarea);
                exit(0);
             }
          }
@@ -142,6 +151,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
             wait(NULL);
          }
       }
+      exit(0);
    }
    else
    { // proceso padre
@@ -165,8 +175,10 @@ int main()
    int dType, decision, actualTAsk; // El tipo de dificultad y si continuar con otra tarea
    double difficulty;               // Valor de la dificultad
    bool estado = false;             // Booleano que indicara si se completo un Task
-   int N = 1;                       // Niveles
-   int i = 0;                       // Instancias de Meeseeks
+   int N = 1;
+   int variable;                       // Niveles
+   int *i = &variable;
+   *i = 0;                       // Instancias de Meeseeks
    int contadorT = 0;               // Contador de las Tasks
 
    char *p;                         // Quitar saltos de linea en el Task
@@ -205,8 +217,8 @@ int main()
       do
       {
          endwait = start + seconds;
-         estado = programa(MMTAsk);
-         //estado = boxMM(N, &i, difficulty, MMTAsk);
+         // estado = programa(MMTAsk);
+         estado = boxMM(N, i, difficulty, MMTAsk);
          tareas[contadorT].ejecucion = start;
          tareas[contadorT].terminada = estado;
       } while (start < endwait && estado == false);
