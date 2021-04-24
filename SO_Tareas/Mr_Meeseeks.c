@@ -137,7 +137,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
             cantidadMeeseeks = 20;
          for (int j = 1; j < cantidadMeeseeks; j++)
          {
-            *i++;
+            *i += 1;
             extra = fork();
             if (extra == 0)
             {
@@ -156,7 +156,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
    else
    { // proceso padre
       printf("---------------------------------------\n");
-      *i++;
+      *i += 1;
       printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
       waitpid(variable, NULL, 0);
    }
@@ -175,11 +175,10 @@ int main()
    int dType, decision, actualTAsk; // El tipo de dificultad y si continuar con otra tarea
    double difficulty;               // Valor de la dificultad
    bool estado = false;             // Booleano que indicara si se completo un Task
-   int N = 1;
-   int variable;                       // Niveles
-   int *i = &variable;
-   *i = 0;                       // Instancias de Meeseeks
-   int contadorT = 0;               // Contador de las Tasks
+   int N = 1;                       // Niveles
+   int instancias = 0;              // Instancias de Meeseeks
+   int *i = &instancias;
+   int contadorT, completadas = 0;  // Contador de las Tasks, Tareas Completadas
 
    char *p;                         // Quitar saltos de linea en el Task
    int c;                           // Quitar saltos de linea en el Task
@@ -234,6 +233,8 @@ int main()
    } while (decision);
 
    printf("-----Datos de la Tarea-----\n");
+   printf("Cantidad de Tareas Solicitadas: %d\n", contadorT);
+   printf("---------------------------\n");
    for (int i = 0; i < contadorT; i++)
    {
       struct Tarea tareaActual = tareas[i];
@@ -243,18 +244,20 @@ int main()
       if (tareaActual.terminada)
       {
          printf("Estado de la Tarea: Completa\n");
+         completadas += 1;
       }
       else
       {
          printf("Estado de la Tarea: Incompleta\n");
       }
-      printf("----------\n");
+      printf("---------------------------\n");
       // fputs(tareaActual.terminada ? "true\n" : "false\n", stdout);
    }
-   // printf("Cantidad de Tares Solicitadas: %d\n", contar);
-   // printf("Tiempo de Duracion: %d\n", contar); // hay que hacer por tarea
-   // printf("Tareas Terminadas: %d\n", contar);
-   // printf("Tareas Sin Terminar: %d\n", contar);
 
+   printf("Tareas Terminadas: %d\n", completadas);
+   printf("---------------------------\n");
+   printf("Tareas Sin Terminar: %d\n", contadorT - completadas);
+   printf("---------------------------\n");
+   
    return 0;
 }
