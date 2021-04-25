@@ -126,14 +126,39 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
       printf("Hi I'm Mr Meeseeks hijo! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 1, *i);
       sleep(1);
       pid_t extra;
-      // bool resultado = programa(tarea);
-      if (1 < difficulty && difficulty <= 85)
+      bool resultado = programa(tarea); // se llama a la funcion programa para resolver el problema
+      if (difficulty==0){//Si la dificultad es 0
+         clock_t inicio = clock();//se inicia el conteo del tiempo
+         clock_t actual;
+         int cantidadMeeseeks = 0;
+         while (true)
+         {
+            actual = clock();
+            if (((actual - inicio) / CLOCKS_PER_SEC) >= 10){ //Si ya la tarea lleva mucho tiempo
+               for (int i=0; i<cantidadMeeseeks; i++)
+                  wait(NULL);
+               exit(0);
+            }
+            *i += 1; //se incrementa el valor de i
+            extra = fork();
+            cantidadMeeseeks++;
+            if (extra == 0)
+            {
+               printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 2, *i);
+               bool resultado = programa(tarea);//se llama a la funcion programa para resolver el problema
+               exit(0);
+            }
+
+         }
+         
+      }
+      else if (1 < difficulty && difficulty <= 85)
       {
          int cantidadMeeseeks = 0;
-         if (difficulty > 45)
+         if (difficulty > 45) // si la dificultad es entre 45 y 85 se crean 3 meeseeks
             cantidadMeeseeks = 3;
          else
-            cantidadMeeseeks = 20;
+            cantidadMeeseeks = 20;// si la dificultad esta entre 1 y 45 se crean 20 meeseeks
          for (int j = 1; j < cantidadMeeseeks; j++)
          {
             *i += 1;
@@ -141,13 +166,13 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
             if (extra == 0)
             {
                printf("Hi I'm Mr Meeseeks! extra Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N + 2, *i);
-               // bool resultado = programa(tarea);
+               bool resultado = programa(tarea);//se llama a la funcion programa para resolver la solicitud del usuario
                exit(0);
             }
          }
          for (int j = 1; j < cantidadMeeseeks; j++)
          {
-            wait(NULL);
+            wait(NULL);//Se esperan todos los procesos que se crearon
          }
       }
       exit(0);
@@ -157,7 +182,9 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
       printf("---------------------------------------\n");
       // printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
       *i += 1;
-      waitpid(variable, NULL, 0);
+      waitpid(variable, NULL, 0);//se espera al proeceso padre
+      if(difficulty == 0)
+         return false;
    }
    return true;
 }
@@ -209,16 +236,14 @@ int main()
          printf("-----The difficulty is: %lf-----\n", difficulty);
       }
 
-      do
-      {
-         timer = clock();
-         //estado = programa(MMTAsk);
-         estado = boxMM(N, i, difficulty, MMTAsk);
-         timer = clock() - timer;
-         double time_taken = ((double)timer) / CLOCKS_PER_SEC;
-         tareas[contadorT].ejecucion = time_taken;
-         tareas[contadorT].terminada = estado;
-      } while (estado == false);
+      
+      timer = clock();
+      //estado = programa(MMTAsk);
+      estado = boxMM(N, i, difficulty, MMTAsk);
+      timer = clock() - timer;
+      double time_taken = ((double)timer) / CLOCKS_PER_SEC;
+      tareas[contadorT].ejecucion = time_taken;
+      tareas[contadorT].terminada = estado;
 
       do
       {
