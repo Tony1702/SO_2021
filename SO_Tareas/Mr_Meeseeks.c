@@ -119,7 +119,7 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
 
    if (variable < 0)
    {
-      fprintf(stderr, "Mr Meeseeks has fucking die!");
+      fprintf(stderr, "Mr Meeseeks has fucking died!");
    }
    else if (variable == 0)
    { // proceso hijo
@@ -155,8 +155,8 @@ bool boxMM(int N, int *i, double difficulty, char *tarea)
    else
    { // proceso padre
       printf("---------------------------------------\n");
+      // printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
       *i += 1;
-      printf("Hi I'm Mr Meeseeks! Look at Meeeee. pid:%d, pidd:%d, N:%d, i:%d\n", getpid(), getppid(), N, *i);
       waitpid(variable, NULL, 0);
    }
    return true;
@@ -176,7 +176,6 @@ int main()
    int instancias = 0;              // Instancias de Meeseeks
    int *i = &instancias;
    int contadorT, completadas = 0;  // Contador de las Tasks, Tareas Completadas
-
    char *p;                         // Quitar saltos de linea en el Task
    int c;                           // Quitar saltos de linea en el Task
 
